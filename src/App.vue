@@ -1,15 +1,75 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <h1>
+      Administrador de tareas
+    </h1>
+    <h2> {{ name }}</h2>
+    <div>
+      <input type="text" placeholder="Titulo de la tarea" v-model="newTask.title">
+      <input type="number" placeholder="Horas" v-model="newTask.time">
+      <button @click="addTask">Guardar</button>
+      <button @click="cancelTask">Cancelar</button>
+    </div>
+    <div>
+      <template v-if="tasks.length > 0">
+        <ul>
+          <li v-for="(task, i) in tasks" :key="i">
+          <span>
+            {{ task.title }} - {{ task.time }} horas
+          </span>
+            <button @click="removeTask(i)">Eliminar</button>
+          </li>
+        </ul>
+      </template>
+      <template v-else>
+        <p>
+          No hay tareas
+        </p>
+      </template>
+    </div>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 
 export default {
   name: 'App',
-  components: {
-    HelloWorld
+  data: () => ({
+    name: 'Carlos Daniel Sanjuan',
+    tasks: [],
+    newTask: {
+      title: '',
+      time: 0
+    }
+  }),
+  mounted() {
+    this.tasks = JSON.parse(localStorage.getItem('tasks')) || []
+  },
+  methods: {
+    addTask() {
+      if (this.newTask) {
+        this.tasks.push({
+              title: this.newTask.title,
+              time: this.newTask.time
+            }
+        );
+        localStorage.setItem("tasks", JSON.stringify(this.tasks))
+      }
+      this.newTask = {
+        title: '',
+        time: 0
+      };
+    },
+    cancelTask() {
+      this.newTask = {
+        title: '',
+        time: 0
+      };
+    },
+    removeTask(i) {
+      this.tasks.splice(i, 1);
+      localStorage.setItem("tasks", JSON.stringify(this.tasks))
+    }
   }
 }
 </script>
